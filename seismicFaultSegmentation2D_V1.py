@@ -208,6 +208,9 @@ def _():
     INLINE_COLOR = 'red'
     XLINE_COLOR = 'blue'
     TIMESLICE_COLOR = 'yellow'
+    
+    SAVE_FIGURES = True
+    FIGURES_DIR = "figures"
 
     # --- 8. STATISTICS SETTINGS ---
     SAVE_STATISTICS = True
@@ -252,6 +255,8 @@ def _():
         VISUALIZE_SLICE_TYPE,
         WAVELET_LENGTH_RANGE,
         XLINE_COLOR,
+        SAVE_FIGURES,
+        FIGURES_DIR,
     )
 
 
@@ -272,8 +277,9 @@ def _(OUTPUT_DIR, os):
                 path = os.path.join(base_dir, split, type_)
                 os.makedirs(path, exist_ok=True)
 
-        # Stats directories
+        # Stats and Figures directories
         os.makedirs(os.path.join(base_dir, "statistics"), exist_ok=True)
+        os.makedirs("figures", exist_ok=True)
 
     setup_directories(OUTPUT_DIR)
     return
@@ -863,13 +869,16 @@ def _():
 
 @app.cell(column=1)
 def _(
+    FIGURES_DIR,
     IS_3D,
+    SAVE_FIGURES,
     VIZ_SAMPLE_INDEX,
     VIZ_SHOW_AXIS,
     VIZ_SHOW_CROSSHAIRS,
     VIZ_SHOW_LEGEND,
     VIZ_SLICE_TYPE,
     mo,
+    os,
     train_data,
     visualize_dataset,
 ):
@@ -879,18 +888,25 @@ def _(
         VIZ_SHOW_CROSSHAIRS, VIZ_SHOW_LEGEND
     )
     if fig_train:
+        if SAVE_FIGURES:
+            fig_idx = VIZ_SAMPLE_INDEX if VIZ_SAMPLE_INDEX is not None else 0
+            fname = os.path.join(FIGURES_DIR, f"sample_train_{fig_idx}.png")
+            fig_train.savefig(fname, dpi=300, bbox_inches='tight')
         mo.output.replace(mo.vstack([mo.md("--- Visualizing Training Sample ---"), fig_train]))
     return
 
 
 @app.cell
 def _(
+    FIGURES_DIR,
     IS_3D,
+    SAVE_FIGURES,
     VIZ_SHOW_AXIS,
     VIZ_SHOW_CROSSHAIRS,
     VIZ_SHOW_LEGEND,
     VIZ_SLICE_TYPE,
     mo,
+    os,
     val_data,
     visualize_dataset,
 ):
@@ -900,6 +916,9 @@ def _(
         VIZ_SHOW_CROSSHAIRS, VIZ_SHOW_LEGEND
     )
     if fig_val:
+        if SAVE_FIGURES:
+            fname = os.path.join(FIGURES_DIR, "sample_validation_random.png")
+            fig_val.savefig(fname, dpi=300, bbox_inches='tight')
         mo.output.replace(mo.vstack([mo.md("--- Visualizing Validation Sample ---"), fig_val]))
     return
 
@@ -1059,32 +1078,65 @@ def _(SHOW_STATISTICS_TABLE, full_stats, mo, pd, stats_train, stats_val):
 
 
 @app.cell
-def _(SHOW_STATISTICS_PLOT, full_stats, mo, plot_statistics):
+def _(
+    FIGURES_DIR,
+    SAVE_FIGURES,
+    SHOW_STATISTICS_PLOT,
+    full_stats,
+    mo,
+    os,
+    plot_statistics,
+):
     fig_stats_full = None
     if SHOW_STATISTICS_PLOT:
         fig_stats_full = plot_statistics(full_stats, "Full")
         if fig_stats_full:
+            if SAVE_FIGURES:
+                fname = os.path.join(FIGURES_DIR, "statistics_full.png")
+                fig_stats_full.savefig(fname, dpi=300, bbox_inches='tight')
             # Explicitly output the combination of text and figure
             mo.output.replace(mo.vstack([mo.md("--- Statistics Plots (Full) ---"), fig_stats_full]))
     return
 
 
 @app.cell
-def _(SHOW_STATISTICS_PLOT, mo, plot_statistics, stats_train):
+def _(
+    FIGURES_DIR,
+    SAVE_FIGURES,
+    SHOW_STATISTICS_PLOT,
+    mo,
+    os,
+    plot_statistics,
+    stats_train,
+):
     fig_stats_train = None
     if SHOW_STATISTICS_PLOT:
         fig_stats_train = plot_statistics(stats_train, "Training")
         if fig_stats_train:
+            if SAVE_FIGURES:
+                fname = os.path.join(FIGURES_DIR, "statistics_train.png")
+                fig_stats_train.savefig(fname, dpi=300, bbox_inches='tight')
             mo.output.replace(mo.vstack([mo.md("--- Statistics Plots (Training) ---"), fig_stats_train]))
     return
 
 
 @app.cell
-def _(SHOW_STATISTICS_PLOT, mo, plot_statistics, stats_val):
+def _(
+    FIGURES_DIR,
+    SAVE_FIGURES,
+    SHOW_STATISTICS_PLOT,
+    mo,
+    os,
+    plot_statistics,
+    stats_val,
+):
     fig_stats_val = None
     if SHOW_STATISTICS_PLOT:
         fig_stats_val = plot_statistics(stats_val, "Validation")
         if fig_stats_val:
+            if SAVE_FIGURES:
+                fname = os.path.join(FIGURES_DIR, "statistics_validation.png")
+                fig_stats_val.savefig(fname, dpi=300, bbox_inches='tight')
             mo.output.replace(mo.vstack([mo.md("--- Statistics Plots (Validation) ---"), fig_stats_val]))
     return
 

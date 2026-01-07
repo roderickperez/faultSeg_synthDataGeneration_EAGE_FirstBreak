@@ -1,0 +1,13 @@
+[project]
+name = "faultseg-synthdatageneration-eage-firstbreak"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "marimo>=0.18.4",
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.0",
+    "pandas>=2.3.3",
+    "scipy>=1.16.3",
+]
