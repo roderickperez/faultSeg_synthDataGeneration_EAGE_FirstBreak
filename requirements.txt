@@ -1,9 +1,0 @@
-numpy
-matplotlib
-plotly
-pandas
-tqdm
-scipy
-segyio
-h5py
-cigvis

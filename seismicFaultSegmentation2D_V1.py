@@ -203,7 +203,7 @@ def _():
 
     SHOW_CROSSHAIRS = True
     SHOW_CROSSHAIRS_LEGEND = True
-.
+
     CROSSHAIR_THICKNESS = 1.5
     INLINE_COLOR = 'red'
     XLINE_COLOR = 'blue'
